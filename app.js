@@ -67,16 +67,14 @@ app.get("/compose", function(req, res) {
 });
 
 app.get("/posts/:postName", function(req, res) {
-  const requestedTitle = _.lowerCase(req.params.postName);
-  posts.forEach(function(post) {
-    const storedTitle = _.lowerCase(post.title);
-    if (requestedTitle === storedTitle) {
-      res.render("post", {
-        post: post
-      });
+  const requestedId = req.params.postName;
+  Post.findOne({_id:requestedId},function(err,post){
+    if(!err){
+          res.render("post", {
+            post: post
+          });
     }
   });
-
 });
 
 app.post("/compose", function(req, res) {
@@ -84,8 +82,12 @@ app.post("/compose", function(req, res) {
     title: req.body.postTitle,
     body: req.body.postBody
   });
-  post.save();
-  res.redirect("/");
+  post.save(function(err){
+    if(!err){
+      res.redirect("/");
+    }
+  });
+
 })
 
 
